@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSV to Markdown Converter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    label, textarea, input, button {
+      margin-bottom: 10px;
+    }
+
+    textarea, input {
+      width: 100%;
+      padding: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #markdownOutput {
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>CSV to Markdown Converter</h1>
+
+  <label for="csvInput">Enter CSV:</label>
+  <textarea id="csvInput" placeholder="Enter your CSV here..."></textarea>
+
+  <label for="delimiter">Delimiter:</label>
+  <input type="text" id="delimiter" placeholder="Enter delimiter (e.g., comma, semicolon, \\t)" />
+
+  <button onclick="convertToMarkdown()">Convert</button>
+  <button onclick="copyToClipboard()">Copy to Clipboard</button>
+
+  <h2>Markdown Output:</h2>
+  <pre id="markdownOutput"></pre>
+
+  <script>
+    function convertToMarkdown() {
+      const csvInput = document.getElementById('csvInput').value;
+      let delimiter = document.getElementById('delimiter').value;
+
+      // Replace '\t' with an actual tab character
+      delimiter = delimiter === '\\t' ? '\t' : delimiter;
+
+      const markdownOutput = document.getElementById('markdownOutput');
+
+      if (csvInput.trim() === '') {
+        markdownOutput.textContent = 'Please enter a valid CSV.';
+        return;
+      }
+
+      const rows = csvInput.split('\n');
+      const headers = rows[0].split(delimiter);
+
+      let markdownResult = '| ' + headers.join(' | ') + ' |\n';
+      markdownResult += '| ' + headers.map(() => '---').join(' | ') + ' |\n';
+
+      for (let i = 1; i < rows.length; i++) {
+        const values = rows[i].split(delimiter);
+        markdownResult += '| ' + values.join(' | ') + ' |\n';
+      }
+
+      markdownOutput.textContent = markdownResult;
+    }
+
+    function copyToClipboard() {
+      const markdownOutput = document.getElementById('markdownOutput');
+      const textArea = document.createElement('textarea');
+      textArea.value = markdownOutput.textContent;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      alert('Markdown output copied to clipboard!');
+    }
+  </script>
+
+</body>
+</html>
